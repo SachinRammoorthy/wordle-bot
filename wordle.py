@@ -536,6 +536,6 @@ if __name__ == "__main__":
     # if == 1, plays one random game, shows how the game went
     # if == 2315, runs simulation for all Wordle words (for deterministic methods)
     # other numbers - play N_GAMES games with random words from puzzle_words
-    N_GAMES = 30
+    N_GAMES = 50
 
     main()
