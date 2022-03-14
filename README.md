@@ -1,5 +1,9 @@
 # Wordle Bot
 
+Wordle simulator forked from https://github.com/gamescomputersplay/wordle
+
+## Strategy
+
 Every iteration, we go through each of the 12000 words
 * For every word, we go through each of the possible resulting 243 configurations if we guessed that word and get the “word_score"
     * For every configuration, we have to find the number of words that we could limit the problem to if it were true (“configuration score")
