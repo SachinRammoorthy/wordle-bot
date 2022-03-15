@@ -91,6 +91,9 @@ class Bot:
         best_guess = ""
         
         count = 0
+        entropy_arr = []
+        words_arr = []
+
         for word in possible_guesses:
             count += 1
             print(count)
@@ -98,7 +101,7 @@ class Bot:
             entropy = 0
             for config in self.all_perms:
                 config_words = {}
-                
+            
                 for i in range(len(config)):
                     char = config[i]
                     char_words = set()
@@ -107,7 +110,7 @@ class Bot:
                     elif char == 'Y':
                         for x in range(5):
                             if x != i:
-                                char_words = char_words.union(contains_dict.contains_dict[word[x]][x])
+                                char_words = char_words.union(contains_dict.contains_dict[word[x]][x]) 
                     else:
                         char_words = not_contains_dict.not_contains_dict[word[i]]
 
@@ -120,10 +123,18 @@ class Bot:
                     config_words.add("hello")
                 entropy -= len(config_words)/len(possible_guesses) * math.log(len(config_words)/len(possible_guesses), 2)
                 
+            entropy_arr.append(entropy)
+            words_arr.append(word)
+
             if entropy > max_entropy:
                 best_guess = word
                 max_entropy = entropy
         
+        
+        print([x for _, x in sorted(zip(entropy_arr, words_arr))])
+        print(sorted(entropy_arr))
+
+
         return best_guess
             
                 
