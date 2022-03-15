@@ -1,7 +1,5 @@
 # Wordle Bot
 
-Wordle simulator forked from https://github.com/gamescomputersplay/wordle
-
 ## Strategy
 
 Every iteration, we go through each of the 12000 words
@@ -15,8 +13,19 @@ Every iteration, we go through each of the 12000 words
 * Choose the word with the highest word_score
 
 
-# Tasks
+## Tasks
 
 1. Preprocessing (make contains and not contains dictionaries)
 2. Find the best first word
 3. Logic of the workflow
+
+
+
+
+## Wordle Simulator
+* Game Class
+    * guess_and_check_word(): input: Arise - apple, output:GNNNG - function to check the word 
+    * Member variables
+        * words guessed so far 
+
+
