@@ -4,6 +4,7 @@ import time
 import contains_dict
 import not_contains_dict
 import gen_perms
+import math
 
 class Game:
     
@@ -68,8 +69,8 @@ class Bot:
 
     all_perms = gen_perms.all_perms
     
-    def __init__():
-        pass
+    # def __init__():
+    #     pass
     
     def get_guess(self, possible_guesses):
         # go through all possible words 
@@ -85,26 +86,69 @@ class Bot:
             * Score for that word is the entropy (summation log whatever) of the configuration scores
         * Choose the word with the highest word_score
         '''
-        #for word in possible_guesses:
+        
+        max_entropy = 0
+        best_guess = ""
+        
+        count = 0
+        for word in possible_guesses:
+            count += 1
+            print(count)
+
+            entropy = 0
+            for config in self.all_perms:
+                config_words = {}
+                
+                for i in range(len(config)):
+                    char = config[i]
+                    char_words = set()
+                    if char == 'G':
+                        char_words = contains_dict.contains_dict[word[i]][i]
+                    elif char == 'Y':
+                        for x in range(5):
+                            if x != i:
+                                char_words = char_words.union(contains_dict.contains_dict[word[x]][x])
+                    else:
+                        char_words = not_contains_dict.not_contains_dict[word[i]]
+
+                    if i==0:
+                        config_words = char_words
+                    
+                    config_words = config_words.intersection(char_words)
+                
+                if len(config_words) == 0:
+                    config_words.add("hello")
+                entropy -= len(config_words)/len(possible_guesses) * math.log(len(config_words)/len(possible_guesses), 2)
+                
+            if entropy > max_entropy:
+                best_guess = word
+                max_entropy = entropy
+        
+        return best_guess
             
+                
 
+
+                
+
+                
         
 
-        pass
-        
 
-
-def simulate(num_simulations, answer_list):
+def simulate(num_simulations, answer_list, all_words):
 
     bot = Bot()
     wins = 0
     losses = 0
-    for i in range(num_simulations):
-        game = Game(answer_list)
 
-        while game.in_play and game.won == False:
-            bot_guess = bot.get_guess(game)
-            guess_result = game.guess_and_check_word(bot_guess)
+    print(bot.get_guess(all_words))
+
+    # for i in range(num_simulations):
+    #     game = Game(answer_list)
+
+    #     while game.in_play and game.won == False:
+    #         bot_guess = bot.get_guess(game)
+    #         guess_result = game.guess_and_check_word(bot_guess)
             
 
 
@@ -124,7 +168,7 @@ def main():
         for line in in_file:
             all_words.append(line.strip())
     
-    simulate(1, possible_answers, all_words)
+    simulate(1, possible_answers, possible_answers)
 
     print (f"Time: {time.time()-start_time}")
 
