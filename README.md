@@ -28,4 +28,45 @@ Every iteration, we go through each of the 12000 words
     * Member variables
         * words guessed so far 
 
+## Handling Edge Cases
+    # problem: how to handle double letters
+    
+    # word = LEAAL
+    # answer = HELLO
+    # config = YG__Y
+    # intersect: contains[l][1234], contains[e][1], not_contains[a], not_contains[a], contains[l][0123]
+    # case: works
+    
+    #word = aboat
+    #answer = abate
+    #config = GG_YY
+    # intersect: contains[a][0], contains[b][1], not_contains[o], contains[a][0] [1] [2] [4], contains[t][0] [1] [2] [3]
+    # diagnosis: works
+    
+    #word = aboot
+    #answer = about
+    #config = GGG_G
+    # intersect: cont[a][0], cont[b][1], cont[o][2], not_contain[o], cont[t][4]
+    # case _G or G_ or Y_ you cannot intersect the not contains that the blank character gave
+
+    #word = abuxu
+    #anser = about
+    # config = GGY__
+
+    #word = abuut
+    #answer = about
+    # config = GG_GG
+
+    #similar to GGY_G
+    
+    #word = aboot
+    #answer = abate
+    #config = GG__Y
+    # diagnosis: works
+
+    #word = aboto
+    #answer = aboot
+    #config = GGGYY
+    # case: works
+
 
