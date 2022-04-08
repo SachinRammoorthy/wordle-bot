@@ -20,7 +20,7 @@ class Game:
         
         num = random.randrange(0, 2315, 1)
         #self.actual_word = words_guess[num]
-        self.actual_word = "scoop"
+        self.actual_word = "skate"
 
     def guess_and_check_word(self, guess):
         # return a string/array GNNNY
@@ -118,9 +118,10 @@ class Bot:
                         config_words = char_words
                     
                     config_words = config_words.intersection(char_words)
-                
+                    
+                #TODO add logic to account for edge case
                 if len(config_words) == 0:
-                    config_words.add("hello")
+                    config_words.add("xxxxx")
                 entropy -= len(config_words)/len(possible_guesses) * math.log(len(config_words)/len(possible_guesses), 2)
                 
             entropy_arr.append(entropy)
@@ -131,19 +132,35 @@ class Bot:
                 max_entropy = entropy
         
         
-        print([x for _, x in sorted(zip(entropy_arr, words_arr))])
-        print(sorted(entropy_arr))
+        #print([x for _, x in sorted(zip(entropy_arr, words_arr))])
+        #print(sorted(entropy_arr))
 
 
         return best_guess
             
-                
+def get_word_set(word, guess_result, word_space):
+    
+    config_words = {}
+    
+    for i in range(5):
+        char = guess_result[i]
+        char_words = set()
+        if char == 'G':
+            char_words = contains_dict.contains_dict[word[i]][i]
+        elif char == 'Y':
+            for x in range(5):
+                if x != i:
+                    char_words = char_words.union(contains_dict.contains_dict[word[x]][x]) 
+        else: 
+            # TODO logic for doubles
+            char_words = not_contains_dict.not_contains_dict[word[i]]
 
-
-                
-
-                
-        
+        if i==0:
+            config_words = char_words
+    
+        config_words = config_words.intersection(char_words)
+    
+    return config_words.intersection(word_space)
 
 
 def simulate(num_simulations, answer_list, all_words):
@@ -152,15 +169,30 @@ def simulate(num_simulations, answer_list, all_words):
     wins = 0
     losses = 0
 
-    print(bot.get_guess(all_words))
+    # print(bot.get_guess(all_words))
+    # boney
 
-    # for i in range(num_simulations):
-    #     game = Game(answer_list)
+    for i in range(num_simulations):
+        game = Game(answer_list)
+        
+        # first guess = arise
+        counter = 0
+        word_space = all_words
 
-    #     while game.in_play and game.won == False:
-    #         bot_guess = bot.get_guess(game)
-    #         guess_result = game.guess_and_check_word(bot_guess)
+        while game.in_play and game.won == False:
+            if counter == 0:
+                guess_result = game.guess_and_check_word("arise")
+            else:
+                bot_guess = bot.get_guess(word_space)
+                guess_result = game.guess_and_check_word(bot_guess)
             
+            # use guess_result to filter the list of possible words
+
+            word_space = get_word_set(bot_guess, guess_result, word_space)
+            print("SIZE OF WORD_SPACE: ")
+            print(len(word_space))
+            
+
 
 
 def main():
