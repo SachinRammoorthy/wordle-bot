@@ -20,7 +20,7 @@ class Game:
         
         num = random.randrange(0, 2315, 1)
         #self.actual_word = words_guess[num]
-        self.actual_word = "skate"
+        self.actual_word = "scare"
 
     def guess_and_check_word(self, guess):
         # return a string/array GNNNY
@@ -54,9 +54,10 @@ class Game:
         if guess == self.actual_word:
             self.in_play = False
             self.won = True
-            print("You won")
+            print("You won in " + str(len(self.guess_results)) + " guesses!")
+            print(self.guess_results)
         
-        if len(self.guess_results) == 6 and self.won == False:
+        if len(self.guess_results) == 10 and self.won == False:
             self.in_play = False
             self.won = False
             print("You lost")
@@ -96,11 +97,10 @@ class Bot:
 
         for word in possible_guesses:
             count += 1
-            print(count)
 
             entropy = 0
             for config in self.all_perms:
-                config_words = {}
+                config_words = set()
             
                 for i in range(len(config)):
                     char = config[i]
@@ -110,22 +110,35 @@ class Bot:
                     elif char == 'Y':
                         for x in range(5):
                             if x != i:
-                                char_words = char_words.union(contains_dict.contains_dict[word[x]][x]) 
+                                char_words = char_words.union(contains_dict.contains_dict[word[x]][x])
                     else:
                         char_words = not_contains_dict.not_contains_dict[word[i]]
-
+                    
                     if i==0:
                         config_words = char_words
                     
                     config_words = config_words.intersection(char_words)
                     
+                
+                config_words = config_words.intersection(possible_guesses)
+
                 #TODO add logic to account for edge case
                 if len(config_words) == 0:
                     config_words.add("xxxxx")
-                entropy -= len(config_words)/len(possible_guesses) * math.log(len(config_words)/len(possible_guesses), 2)
+
+                if len(config_words) > len(possible_guesses):
+                    print(word)
+                    print(len(config_words))
+                    print("NOT WORKING")
+                    exit()
+
+                #print(-1*(len(config_words)/len(possible_guesses) * math.log(len(config_words)/len(possible_guesses), 2)))
+                entropy += -1*(len(config_words)/len(possible_guesses) * math.log(len(config_words)/len(possible_guesses), 2))
+
                 
             entropy_arr.append(entropy)
             words_arr.append(word)
+            #print(entropy)
 
             if entropy > max_entropy:
                 best_guess = word
@@ -145,6 +158,7 @@ def get_word_set(word, guess_result, word_space):
     for i in range(5):
         char = guess_result[i]
         char_words = set()
+
         if char == 'G':
             char_words = contains_dict.contains_dict[word[i]][i]
         elif char == 'Y':
@@ -154,10 +168,10 @@ def get_word_set(word, guess_result, word_space):
         else: 
             # TODO logic for doubles
             char_words = not_contains_dict.not_contains_dict[word[i]]
-
+            
         if i==0:
             config_words = char_words
-    
+        
         config_words = config_words.intersection(char_words)
     
     return config_words.intersection(word_space)
@@ -181,16 +195,26 @@ def simulate(num_simulations, answer_list, all_words):
 
         while game.in_play and game.won == False:
             if counter == 0:
-                guess_result = game.guess_and_check_word("arise")
+                bot_guess = "arise"
             else:
                 bot_guess = bot.get_guess(word_space)
-                guess_result = game.guess_and_check_word(bot_guess)
             
+            print(bot_guess)
+            guess_result = game.guess_and_check_word(bot_guess)
+            print(guess_result)
+
             # use guess_result to filter the list of possible words
 
             word_space = get_word_set(bot_guess, guess_result, word_space)
-            print("SIZE OF WORD_SPACE: ")
-            print(len(word_space))
+            
+            if bot_guess in word_space:
+                word_space.remove(bot_guess)
+
+            print("SIZE OF WORD_SPACE: " + str(len(word_space)))
+            if len(word_space) == 1:
+                print(word_space)
+            
+            counter += 1
             
 
 
