@@ -20,7 +20,7 @@ class Game:
         
         num = random.randrange(0, 2315, 1)
         #self.actual_word = words_guess[num]
-        self.actual_word = "scare"
+        self.actual_word = "groin"
 
     def guess_and_check_word(self, guess):
         # return a string/array GNNNY
@@ -95,8 +95,12 @@ class Bot:
         entropy_arr = []
         words_arr = []
 
+        if len(possible_guesses)==1:
+            return list(possible_guesses)[0]
+
         for word in possible_guesses:
             count += 1
+            print(count)
 
             entropy = 0
             for config in self.all_perms:
@@ -105,13 +109,14 @@ class Bot:
                 for i in range(len(config)):
                     char = config[i]
                     char_words = set()
+                    
                     if char == 'G':
                         char_words = contains_dict.contains_dict[word[i]][i]
                     elif char == 'Y':
                         for x in range(5):
                             if x != i:
-                                char_words = char_words.union(contains_dict.contains_dict[word[x]][x])
-                    else:
+                                char_words = char_words.union(contains_dict.contains_dict[word[i]][x])
+                    elif (len(set(word)) == len(word)):
                         char_words = not_contains_dict.not_contains_dict[word[i]]
                     
                     if i==0:
@@ -122,7 +127,7 @@ class Bot:
                 
                 config_words = config_words.intersection(possible_guesses)
 
-                #TODO add logic to account for edge case
+                
                 if len(config_words) == 0:
                     config_words.add("xxxxx")
 
@@ -164,9 +169,8 @@ def get_word_set(word, guess_result, word_space):
         elif char == 'Y':
             for x in range(5):
                 if x != i:
-                    char_words = char_words.union(contains_dict.contains_dict[word[x]][x]) 
-        else: 
-            # TODO logic for doubles
+                    char_words = char_words.union(contains_dict.contains_dict[word[i]][x]) 
+        elif (len(set(word)) == len(word)): 
             char_words = not_contains_dict.not_contains_dict[word[i]]
             
         if i==0:
@@ -195,10 +199,10 @@ def simulate(num_simulations, answer_list, all_words):
 
         while game.in_play and game.won == False:
             if counter == 0:
-                bot_guess = "arise"
+                bot_guess = "shiny"
             else:
                 bot_guess = bot.get_guess(word_space)
-            
+            #bot_guess = bot.get_guess(word_space)
             print(bot_guess)
             guess_result = game.guess_and_check_word(bot_guess)
             print(guess_result)
@@ -211,9 +215,9 @@ def simulate(num_simulations, answer_list, all_words):
                 word_space.remove(bot_guess)
 
             print("SIZE OF WORD_SPACE: " + str(len(word_space)))
-            if len(word_space) == 1:
+            if len(word_space) == 1 or len(word_space)==2:
                 print(word_space)
-            
+            print(word_space)
             counter += 1
             
 
